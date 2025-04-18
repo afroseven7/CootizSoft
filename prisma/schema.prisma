@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Negocio {
+  id             String   @id @default(uuid())
+  idUsuario      String                            
+  nombre         String   @db.VarChar(255)
+  identificacion String   @db.VarChar(100)
+  direccion      String?
+  ciudad         String   @db.VarChar(100)
+  telefono       String   @db.VarChar(50)
+  email          String   @unique @db.VarChar(255)
+  logo           String?
+  createdAt      DateTime @default(now())
+
+  cotizaciones   Cotizacion[]                       // 🔁 Relación inversa
+
+  @@index([idUsuario])                              // 🔍 Para búsquedas rápidas por usuario
+}
+
+
+
+model Producto {
+  id          String   @id @default(uuid())
+  nombre      String
+  descripcion String?
+  precio      Float
+  stock       Int
+  estado      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  imagen      String[]
+  idUsuario   String
+}
+
+model Cliente {
+  id             String   @id @default(uuid())
+  identificacion String   @unique
+  nombre         String
+  telefono       String
+  direccion      String?
+  email          String   @unique
+  idUsuario      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  cotizaciones   Cotizacion[] // 🔥 Relación inversa
+  @@index([idUsuario])
+}
+
+model Plantilla {
+  id             String   @id @default(uuid())
+  idUsuario      String
+  updatedAt      DateTime @updatedAt
+  contenido      String
+  nombre         String   @db.VarChar(255)
+  predeterminada Boolean  @default(false)
+  
+
+  cotizaciones   Cotizacion[] // 🔥 Relación inversa
+  @@index([idUsuario])
+}
+
+model Cotizacion {
+  id            String    @id @default(uuid())
+  idUsuario     String
+  clienteId     String
+  plantillaId   String
+  negocioId     String
+  productos     Json      // [{ id, nombre, descripcion, precio, cantidad }]
+  subtotal      Float
+  iva           Float 
+  total         Float
+  contenidoHTML String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  fechaVencimiento DateTime  
+  facturada         Boolean   @default(false)
+  
+
+
+  
+  cliente       Cliente   @relation(fields: [clienteId], references: [id])
+  plantilla     Plantilla @relation(fields: [plantillaId], references: [id])
+  negocio       Negocio   @relation(fields: [negocioId], references: [id])
+
+}
