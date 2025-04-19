@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma/generated/client";
 import crypto from "crypto"; // ✅ Importamos `crypto` SOLO en el backend
 
 const prisma = new PrismaClient();

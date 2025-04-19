@@ -1,6 +1,6 @@
 // src/app/api/facturada/route.js
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma/generated/client";
 import crypto from "crypto";
 
 const prisma = new PrismaClient();
