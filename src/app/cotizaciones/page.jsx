@@ -6,7 +6,7 @@ import VistaPreviaCotizacion from "@/components/VistaPreviaCotizacion";
 import BuscadorClientes from "@/components/BuscadorClientes";
 import BuscadorProductos from "@/components/BuscadorProductos";
 import ComponenteDuracionCotizacion from "@/components/ComponenteDuracionCotizacion";
-import html2pdf from "html2pdf.js";
+// ❌ QUITADO: import html2pdf from "html2pdf.js";
 
 export default function CotizacionesPage() {
   const { user } = useUser();
@@ -61,6 +61,7 @@ export default function CotizacionesPage() {
       }
     }
 
+    // ✅ Import dinámico solo en cliente
     const html2pdf = (await import("html2pdf.js")).default;
 
     const images = element.querySelectorAll("img");
@@ -93,12 +94,10 @@ export default function CotizacionesPage() {
       return;
     }
 
-    // 📦 Calcular totales
     const subtotal = productosSeleccionados.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
     const iva = subtotal * 0.19;
     const total = subtotal + iva;
 
-    // 🧾 Obtener HTML actual de la cotización
     const htmlCotizacion = vistaRef.current?.innerHTML || "";
 
     const res = await fetch("/api/cotizaciones", {
@@ -143,7 +142,6 @@ export default function CotizacionesPage() {
       <BuscadorProductos onProductosSeleccionados={setProductosSeleccionados} />
       <ComponenteDuracionCotizacion onChange={setDuracion} />
 
-      {/* Botones */}
       <div className="flex justify-end mt-6 gap-4">
         <button
           onClick={handleDownloadPDF}
@@ -160,7 +158,6 @@ export default function CotizacionesPage() {
         </button>
       </div>
 
-      {/* Vista previa */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4 text-center">Vista previa de la Cotización</h2>
         <div className="editor-wrapper">
